@@ -1,6 +1,7 @@
 package com.example.snehithModule.service;
 
 import com.example.snehithModule.entity.InstituteModule;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
