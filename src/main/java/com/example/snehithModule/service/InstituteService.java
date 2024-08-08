@@ -1,17 +1,18 @@
 package com.example.snehithModule.service;
 
 import com.example.snehithModule.entity.InstituteModule;
-import org.springframework.http.ResponseEntity;
+import com.example.snehithModule.payload.InstituteDTO;
+import com.example.snehithModule.payload.InstituteResponse;
 
 import java.util.List;
 
 public interface InstituteService {
 
-    List<InstituteModule> getAllMembers();
+    InstituteResponse getAllMembers();
 
-    void saveMember(InstituteModule instituteModule);
+    InstituteDTO saveMember(InstituteDTO instituteDTO);
 
-    void deleteMember(Long id);
+    InstituteDTO deleteMember(Long id);
 
-    void updateMember(InstituteModule instituteModule, Long id);
+    InstituteDTO updateMember(InstituteDTO instituteDTO, Long id);
 }

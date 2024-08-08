@@ -3,14 +3,14 @@ package com.example.snehithModule.service;
 import com.example.snehithModule.entity.InstituteModule;
 import com.example.snehithModule.exceptions.APIException;
 import com.example.snehithModule.exceptions.ResourceNotFoundException;
+import com.example.snehithModule.payload.InstituteDTO;
+import com.example.snehithModule.payload.InstituteResponse;
 import com.example.snehithModule.repository.InstituteRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
+
 
 @Service
 public class InstituteServiceImpl implements InstituteService{
@@ -18,40 +18,54 @@ public class InstituteServiceImpl implements InstituteService{
     @Autowired
     private InstituteRepository instituteRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
-    public List<InstituteModule> getAllMembers() {
+    public InstituteResponse getAllMembers() {
         List<InstituteModule> membersData = instituteRepository.findAll();
         if(membersData.isEmpty()){
             throw new APIException("No Data Available");
-        }else {
-            return membersData;
         }
+
+        List<InstituteDTO> instituteDTOS = membersData.stream()
+                .map(a -> modelMapper.map(a, InstituteDTO.class))
+                .toList();
+        InstituteResponse instituteResponse = new InstituteResponse();
+        instituteResponse.setSnehith(instituteDTOS);
+        return instituteResponse;
     }
 
-    @Override
-    public void saveMember(InstituteModule instituteModule) {
-        List<InstituteModule> sameName = instituteRepository.findByName(instituteModule.getName());
-        if(sameName.isEmpty()) {
-            instituteRepository.save(instituteModule);
-        }else {
-            throw new APIException("Name already Exist");
-        }
-    }
+
 
     @Override
-    public void deleteMember(Long id) {
+    public InstituteDTO saveMember(InstituteDTO instituteDTO) {
+        InstituteModule instituteModule = modelMapper.map(instituteDTO, InstituteModule.class);
+        InstituteModule savedMember = instituteRepository.save(instituteModule);
+        return modelMapper.map(savedMember, InstituteDTO.class);
+    }
+
+
+
+    @Override
+    public InstituteDTO deleteMember(Long id) {
         InstituteModule a = instituteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Member","MemberId",id));
 
         instituteRepository.deleteById(id);
+        return modelMapper.map(a, InstituteDTO.class);
     }
 
+
+
     @Override
-    public void updateMember(InstituteModule instituteModule, Long id) {
+    public InstituteDTO updateMember(InstituteDTO instituteDTO, Long id) {
+        InstituteModule instituteModule = modelMapper.map(instituteDTO, InstituteModule.class);
         InstituteModule a = instituteRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Member","MemberId",id));
 
         a.setName(instituteModule.getName());
-        instituteRepository.save(a);
+        InstituteModule updatedMember = instituteRepository.save(a);
+        return modelMapper.map(updatedMember, InstituteDTO.class);
     }
 }
