@@ -1,6 +1,8 @@
 package com.example.snehithModule.service;
 
 import com.example.snehithModule.entity.InstituteModule;
+import com.example.snehithModule.exceptions.APIException;
+import com.example.snehithModule.exceptions.ResourceNotFoundException;
 import com.example.snehithModule.repository.InstituteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,7 @@ public class InstituteServiceImpl implements InstituteService{
     public List<InstituteModule> getAllMembers() {
         List<InstituteModule> membersData = instituteRepository.findAll();
         if(membersData.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No Data available");
+            throw new APIException("No Data Available");
         }else {
             return membersData;
         }
@@ -32,21 +34,22 @@ public class InstituteServiceImpl implements InstituteService{
         if(sameName.isEmpty()) {
             instituteRepository.save(instituteModule);
         }else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Name already Exist");
+            throw new APIException("Name already Exist");
         }
     }
 
     @Override
     public void deleteMember(Long id) {
         InstituteModule a = instituteRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Resource not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Member","MemberId",id));
 
         instituteRepository.deleteById(id);
     }
 
     @Override
     public void updateMember(InstituteModule instituteModule, Long id) {
-        InstituteModule a = instituteRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Resource not Found"));
+        InstituteModule a = instituteRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Member","MemberId",id));
 
         a.setName(instituteModule.getName());
         instituteRepository.save(a);

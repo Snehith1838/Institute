@@ -19,44 +19,28 @@ public class InstituteController {
     private InstituteService instituteService;
 
     @GetMapping("/allMembers")
-    public Object getAllMembers(){
-        try {
-            return instituteService.getAllMembers();
-        }catch (ResponseStatusException e){
-            return new ResponseEntity<>(e.getReason(),e.getStatusCode());
-        }
+    public List<InstituteModule> getAllMembers(){
+        return instituteService.getAllMembers();
     }
 
 
     @PostMapping("/addMember")
     public ResponseEntity<String> saveMember(@Valid @RequestBody InstituteModule instituteModule){
-        try {
-            instituteService.saveMember(instituteModule);
-            return new ResponseEntity<>("Member added successfully", HttpStatus.CREATED);
-        }catch (ResponseStatusException e){
-            return new ResponseEntity<>(e.getReason(),e.getStatusCode());
-        }
+        instituteService.saveMember(instituteModule);
+        return new ResponseEntity<>("Member added successfully", HttpStatus.CREATED);
     }
 
 
     @DeleteMapping("/deleteMember/{id}")
     public ResponseEntity<String> deleteMember(@PathVariable Long id){
-        try {
-            instituteService.deleteMember(id);
-            return new ResponseEntity<>("Member deleted successfully", HttpStatus.OK);
-        }catch(ResponseStatusException e){
-            return new ResponseEntity<>(e.getReason(),e.getStatusCode());
-        }
+        instituteService.deleteMember(id);
+        return new ResponseEntity<>("Member deleted successfully", HttpStatus.OK);
     }
 
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateMember(@RequestBody InstituteModule instituteModule, @PathVariable Long id){
-        try {
-            instituteService.updateMember(instituteModule, id);
-            return new ResponseEntity<>("Member Updated successfully", HttpStatus.OK);
-        }catch (ResponseStatusException e){
-            return new ResponseEntity<>(e.getReason(),e.getStatusCode());
-        }
+        instituteService.updateMember(instituteModule, id);
+        return new ResponseEntity<>("Member Updated successfully", HttpStatus.OK);
     }
 }
