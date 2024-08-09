@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface InstituteService {
 
-    InstituteResponse getAllMembers();
+    InstituteResponse getAllMembers(Integer pageNumber, Integer pageSize,String sortBy,String sortOrder);
 
     InstituteDTO saveMember(InstituteDTO instituteDTO);
 

@@ -6,8 +6,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class InstituteModule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,27 +22,4 @@ public class InstituteModule {
     @NotBlank
     private String name;
 
-    public InstituteModule() {
-    }
-
-    public InstituteModule(String name, int id) {
-        this.name = name;
-        this.id = id;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

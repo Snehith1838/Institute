@@ -1,5 +1,6 @@
 package com.example.snehithModule.service;
 
+import com.example.snehithModule.config.AppConstants;
 import com.example.snehithModule.entity.InstituteModule;
 import com.example.snehithModule.exceptions.APIException;
 import com.example.snehithModule.exceptions.ResourceNotFoundException;
@@ -8,6 +9,10 @@ import com.example.snehithModule.payload.InstituteResponse;
 import com.example.snehithModule.repository.InstituteRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -22,8 +27,16 @@ public class InstituteServiceImpl implements InstituteService{
     private ModelMapper modelMapper;
 
     @Override
-    public InstituteResponse getAllMembers() {
-        List<InstituteModule> membersData = instituteRepository.findAll();
+    public InstituteResponse getAllMembers(Integer pageNumber,Integer pageSize,String sortBy,String sortOrder) {
+
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber,pageSize,sortByAndOrder);
+        Page institutePage = instituteRepository.findAll(pageDetails);
+
+        List<InstituteModule> membersData = institutePage.getContent();
         if(membersData.isEmpty()){
             throw new APIException("No Data Available");
         }
@@ -33,6 +46,11 @@ public class InstituteServiceImpl implements InstituteService{
                 .toList();
         InstituteResponse instituteResponse = new InstituteResponse();
         instituteResponse.setSnehith(instituteDTOS);
+        instituteResponse.setPageNumber(institutePage.getNumber());
+        instituteResponse.setPageSize(institutePage.getSize());
+        instituteResponse.setTotalElements(institutePage.getTotalElements());
+        instituteResponse.setTotalPages(institutePage.getTotalPages());
+        instituteResponse.setLastPage(institutePage.isLast());
         return instituteResponse;
     }
 

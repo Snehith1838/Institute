@@ -1,6 +1,6 @@
 package com.example.snehithModule.controller;
 
-import com.example.snehithModule.entity.InstituteModule;
+import com.example.snehithModule.config.AppConstants;
 import com.example.snehithModule.payload.InstituteDTO;
 import com.example.snehithModule.payload.InstituteResponse;
 import com.example.snehithModule.service.InstituteService;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/institute")
@@ -20,9 +19,20 @@ public class InstituteController {
     @Autowired
     private InstituteService instituteService;
 
+
+    //Example of using requesting parameter
+    @GetMapping("/echo")
+    public ResponseEntity<String> echoMessage(@RequestParam(name = "inputMessage", defaultValue = "Hii Bro") String message){
+        return new ResponseEntity<>("Echo Message : " + message,HttpStatus.OK);
+    }
+
+
     @GetMapping("/allMembers")
-    public InstituteResponse getAllMembers(){
-        return instituteService.getAllMembers();
+    public InstituteResponse getAllMembers(@RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                           @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+                                           @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+                                           @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder){
+        return instituteService.getAllMembers(pageNumber,pageSize,sortBy,sortOrder);
     }
 
 
